@@ -87,6 +87,10 @@ if (!window.fetch || !window.Worker || !window.WebAssembly) {
 If your app has a [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy),
 wasm-worker require `worker-src data:` and `script-src data:` in your config.
 
+## Inspiration
+
+This project is inspired by [greenlet](https://github.com/developit/greenlet).
+
 ## Change Log
 
 This project adheres to [Semantic Versioning](http://semver.org/).  
@@ -96,10 +100,6 @@ Every release, along with the migration instructions, is documented on the Githu
 **Matteo Basso**
 - [github/mbasso](https://github.com/mbasso)
 - [@teo_basso](https://twitter.com/teo_basso)
-
-## Inspiration
-
-This project is inspired by [greenlet](https://github.com/developit/greenlet).
 
 ## Copyright and License
 Copyright (c) 2018, Matteo Basso.
