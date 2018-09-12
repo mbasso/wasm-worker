@@ -1,0 +1,29 @@
+{
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "no-useless-escape": 0,
+    "valid-jsdoc": 2,
+    "quotes": [2, "single"],
+    "strict": [2, "never"]
+  },
+  "extends": "airbnb/base",
+  "globals": {
+    "describe"   : false,
+    "it"         : false,
+    "expect"     : false,
+    "before"     : false,
+    "beforeEach" : false,
+    "beforeAll"  : false,
+    "after"      : false,
+    "afterEach"  : false,
+    "afterAll"   : false,
+    "ACTIONS"    : false,
+    "WebAssembly": false,
+    "getImportObject": false,
+    "moduleInstance"   : false
+  }
+}

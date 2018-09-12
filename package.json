@@ -1,0 +1,78 @@
+{
+  "name": "wasm-worker",
+  "version": "0.1.0",
+  "description": "Move a WebAssembly module into its own thread",
+  "main": "lib/index.js",
+  "jsnext:main": "es/index.js",
+  "files": [
+    "dist",
+    "lib",
+    "es",
+    "bin",
+    "src"
+  ],
+  "scripts": {
+    "clean": "rimraf lib dist es bin",
+    "test": "cross-env BABEL_ENV=commonjs NODE_ENV=test karmatic \"**/*.spec.js\"",
+    "check:src": "npm run lint && npm run test",
+    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib --ignore cli",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es --ignore cli",
+    "build:umd": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack --env.prod src/index.js dist/wasm-worker.js",
+    "build:umd:min": "cross-env BABEL_ENV=commonjs NODE_ENV=production webpack --env.prod src/index.js dist/wasm-worker.min.js",
+    "build": "npm run build:commonjs && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "prepublish": "npm run clean && npm run check:src && npm run build",
+    "lint": "eslint src test build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mbasso/wasm-worker.git"
+  },
+  "keywords": [
+    "webassembly",
+    "wasm",
+    "webworker",
+    "worker"
+  ],
+  "author": "Matteo Basso (https://github.com/mbasso)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mbasso/wasm-worker/issues"
+  },
+  "homepage": "https://github.com/mbasso/wasm-worker",
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-eslint": "7.2.3",
+    "babel-loader": "7.1.2",
+    "babel-plugin-transform-es2015-modules-commonjs": "6.26.0",
+    "babel-plugin-transform-es3-member-expression-literals": "6.22.0",
+    "babel-plugin-transform-es3-property-literals": "6.22.0",
+    "babel-plugin-transform-object-rest-spread": "6.26.0",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-stage-0": "6.24.1",
+    "babel-register": "6.26.0",
+    "compression-webpack-plugin": "1.0.0",
+    "cross-env": "5.0.5",
+    "eslint": "4.6.1",
+    "eslint-config-airbnb": "15.1.0",
+    "eslint-plugin-import": "2.7.0",
+    "fetch-mock": "7.0.0-alpha.6",
+    "karmatic": "1.2.0",
+    "rimraf": "2.6.2",
+    "webpack": "3.5.5"
+  },
+  "npmName": "wasm-worker",
+  "npmFileMap": [
+    {
+      "basePath": "/dist/",
+      "files": [
+        "*.js"
+      ]
+    }
+  ],
+  "browserify": {
+    "transform": [
+      "loose-envify"
+    ]
+  }
+}
