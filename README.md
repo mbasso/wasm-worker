@@ -66,8 +66,8 @@ type Options = {
   getImportObject: () => importObject,
 };
 
-wasmWorker(url: string, options: Options): Promise<WasmWorkerModule> // browser only
-wasmWorker(bufferSource: TypedArray | ArrayBuffer, options: Options): Promise<WasmWorkerModule>
+wasmWorker(url: string, options?: Options): Promise<WasmWorkerModule> // browser only
+wasmWorker(bufferSource: TypedArray | ArrayBuffer, options?: Options): Promise<WasmWorkerModule>
 ```
 
 ## Browser support
