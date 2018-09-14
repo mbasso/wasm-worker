@@ -16,12 +16,19 @@ export default function worker(e) {
 
   if (action === ACTIONS.COMPILE_MODULE) {
     Promise.resolve()
-      .then(() => (
-        typeof payload === 'string'
-          ? fetch(payload).then(response => response.arrayBuffer())
-          : payload
-      ))
-      .then(buffer => WebAssembly.compile(buffer))
+      .then(() => {
+        let res;
+        if (typeof payload === 'string') {
+          res = fetch(payload);
+          if (WebAssembly.compileStreaming !== undefined) {
+            return WebAssembly.compileStreaming(res);
+          }
+          res = res.then(response => response.arrayBuffer());
+        } else {
+          res = Promise.resolve(payload);
+        }
+        return res.then(buffer => WebAssembly.compile(buffer));
+      })
       .then(module =>
         WebAssembly.instantiate(
           module,
