@@ -7,7 +7,7 @@ export default function wasmWorker(source, options = {}) {
   const { getImportObject, ...otherOptions } = options;
 
   const worker = new Worker(
-    `data:,ACTIONS=${JSON.stringify(ACTIONS)}getImportObject=${getImportObject};` +
+    `data:,ACTIONS=${JSON.stringify(ACTIONS)};getImportObject=${getImportObject};` +
     `moduleInstance=null;onmessage=${workerOnMessage}`,
     otherOptions,
   );

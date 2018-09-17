@@ -18,40 +18,41 @@ export default function worker(e) {
     Promise.resolve()
       .then(() => {
         let res;
+        const importObject = getImportObject !== undefined
+          ? getImportObject()
+          : {
+            memoryBase: 0,
+            tableBase: 0,
+            memory: new WebAssembly.Memory({ initial: 256 }),
+            table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
+          };
+
         if (typeof payload === 'string') {
           res = fetch(payload);
-          if (WebAssembly.compileStreaming !== undefined) {
-            return WebAssembly.compileStreaming(res);
+          if (WebAssembly.instantiateStreaming !== undefined) {
+            return WebAssembly.instantiateStreaming(res, importObject);
           }
           res = res.then(response => response.arrayBuffer());
         } else {
           res = Promise.resolve(payload);
         }
-        return res.then(buffer => WebAssembly.compile(buffer));
+
+        return res
+          .then(buff => WebAssembly.compile(buff))
+          .then(module =>
+            WebAssembly.instantiate(module, importObject).then(instance => ({ module, instance })),
+          );
       })
-      .then(module =>
-        WebAssembly.instantiate(
-          module,
-          getImportObject !== undefined
-            ? getImportObject()
-            : {
-              memoryBase: 0,
-              tableBase: 0,
-              memory: new WebAssembly.Memory({ initial: 256 }),
-              table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
-            },
-        )
-          .then((inst) => {
-            // eslint-disable-next-line
-            moduleInstance = inst;
-            onSuccess({
-              exports: WebAssembly.Module
-                .exports(module)
-                .filter(exp => exp.kind === 'function')
-                .map(exp => exp.name),
-            });
-          }),
-      )
+      .then(({ module, instance }) => {
+        // eslint-disable-next-line
+        moduleInstance = instance;
+        onSuccess({
+          exports: WebAssembly.Module
+            .exports(module)
+            .filter(exp => exp.kind === 'function')
+            .map(exp => exp.name),
+        });
+      })
       .catch(onError);
   } else if (action === ACTIONS.CALL_FUNCTION_EXPORT) {
     const { func, params } = payload;

@@ -5,7 +5,13 @@ import bytes from './bytes';
 
 describe('worker', () => {
   beforeEach(() => {
-    fetchMock.mock(/bytes.wasm/, new Response(bytes));
+    fetchMock.mock(/bytes.wasm/, new Response(bytes, {
+      status: 200,
+      statusText: 'OK',
+      headers: {
+        'Content-type': 'application/wasm',
+      },
+    }));
   });
 
   afterEach(() => {
@@ -15,7 +21,7 @@ describe('worker', () => {
   // we need this test because we cannot mock fetch in integrations
   // since we are using 2 diffent contexts.
   // so, use only the worker function
-  it('should instantiate a module from a url using compileStreaming', (done) => {
+  it('should instantiate a module from a url using instantiateStreaming', (done) => {
     // initialize scope, this is automatically injected by ../src/index.js
 
     /* eslint-disable */
@@ -33,26 +39,25 @@ describe('worker', () => {
     const id = 0;
     const action = ACTIONZ.COMPILE_MODULE;
 
-    const _compile = WebAssembly.compile;
-    WebAssembly.compile = jasmine.createSpy('compile').and.callFake((...params) =>
-      _compile(...params)
+    const _instantiate = WebAssembly.instantiate;
+    WebAssembly.instantiate = jasmine.createSpy('instantiate').and.callFake((...params) =>
+      _instantiate(...params)
     );
-    const _compileStreaming = WebAssembly.compileStreaming;
-    WebAssembly.compileStreaming = jasmine.createSpy('compileStreaming').and.callFake(req =>
-      req
-        .then(res => res.arrayBuffer())
-        .then(res => _compile(res))
-    );
+    const _instantiateStreaming = WebAssembly.instantiateStreaming;
+    WebAssembly.instantiateStreaming =
+      jasmine.createSpy('instantiateStreaming').and.callFake((...params) =>
+        _instantiateStreaming(...params)
+      );
   
 
     // assert on post message
     // eslint-disable-next-line
     const self = {
       postMessage: (res) => {
-        expect(WebAssembly.compileStreaming).toHaveBeenCalled();
-        expect(WebAssembly.compile).not.toHaveBeenCalled();
-        WebAssembly.compileStreaming = _compileStreaming;
-        WebAssembly.compile = _compile;
+        expect(WebAssembly.instantiateStreaming).toHaveBeenCalled();
+        expect(WebAssembly.instantiate).not.toHaveBeenCalled();
+        WebAssembly.instantiateStreaming = _instantiateStreaming;
+        WebAssembly.instantiate = _instantiate;
         expect(res).toBeDefined();
         expect(res.id).toEqual(id);
         expect(res.action).toEqual(action);
@@ -79,7 +84,7 @@ describe('worker', () => {
     });
   });
 
-  it('should instantiate a module from a url using compile as fallback', (done) => {
+  it('should instantiate a module from a url using instantiate as fallback', (done) => {
     // initialize scope, this is automatically injected by ../src/index.js
 
     /* eslint-disable */
@@ -97,20 +102,20 @@ describe('worker', () => {
     const id = 0;
     const action = ACTIONZ.COMPILE_MODULE;
 
-    const _compile = WebAssembly.compile;
-    WebAssembly.compile = jasmine.createSpy('compile').and.callFake((...params) =>
-      _compile(...params)
+    const _instantiate = WebAssembly.instantiate;
+    WebAssembly.instantiate = jasmine.createSpy('instantiate').and.callFake((...params) =>
+      _instantiate(...params)
     );
-    const _compileStreaming = WebAssembly.compileStreaming;
-    WebAssembly.compileStreaming = undefined;
+    const _instantiateStreaming = WebAssembly.instantiateStreaming;
+    WebAssembly.instantiateStreaming = undefined;
 
     // assert on post message
     // eslint-disable-next-line
     const self = {
       postMessage: (res) => {
-        expect(WebAssembly.compile).toHaveBeenCalled();
-        WebAssembly.compileStreaming = _compileStreaming;
-        WebAssembly.compile = _compile;
+        expect(WebAssembly.instantiate).toHaveBeenCalled();
+        WebAssembly.instantiateStreaming = _instantiateStreaming;
+        WebAssembly.instantiate = _instantiate;
         expect(res).toBeDefined();
         expect(res.id).toEqual(id);
         expect(res.action).toEqual(action);

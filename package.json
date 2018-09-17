@@ -1,6 +1,6 @@
 {
   "name": "wasm-worker",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Move a WebAssembly module into its own thread",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",
