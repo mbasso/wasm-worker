@@ -21,6 +21,7 @@
     "after"      : false,
     "afterEach"  : false,
     "afterAll"   : false,
+    "spyOn"      : false,
     "ACTIONS"    : false,
     "WebAssembly": false,
     "getImportObject": false,

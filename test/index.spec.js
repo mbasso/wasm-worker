@@ -1,4 +1,5 @@
 import wasmWorker from '../src/index';
+import * as utils from '../src/utils';
 import bytes from './bytes';
 import bytesWithImport from './bytes-imports';
 
@@ -72,6 +73,19 @@ describe('wasm-worker', () => {
       )
       .then((result) => {
         expect(result).toEqual(3);
+        done();
+      });
+  });
+
+  it('should call getWasmSource when creating a module', (done) => {
+    spyOn(utils, 'getWasmSource').and.callThrough();
+
+    wasmWorker(bytes)
+      .then((module) => {
+        expect(utils.getWasmSource).toHaveBeenCalled();
+        expect(module.exports).toBeDefined();
+        expect(module.exports.add).toBeDefined();
+        expect(module.exports.div).toBeDefined();
         done();
       });
   });

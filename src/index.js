@@ -1,5 +1,6 @@
 import ACTIONS from './actions';
 import workerOnMessage from './worker';
+import { getWasmSource } from './utils';
 
 export default function wasmWorker(source, options = {}) {
   let currentId = 0;
@@ -57,7 +58,7 @@ export default function wasmWorker(source, options = {}) {
     worker.postMessage({
       id: currentId,
       action: ACTIONS.COMPILE_MODULE,
-      payload: source,
+      payload: getWasmSource(source),
     });
   });
 }
