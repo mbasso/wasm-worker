@@ -18,14 +18,9 @@ export default function worker(e) {
     Promise.resolve()
       .then(() => {
         let res;
-        const importObject = getImportObject !== undefined
-          ? getImportObject()
-          : {
-            memoryBase: 0,
-            tableBase: 0,
-            memory: new WebAssembly.Memory({ initial: 256 }),
-            table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
-          };
+        if (getImportObject !== undefined) {
+          importObject = getImportObject();
+        }
 
         if (typeof payload === 'string') {
           res = fetch(payload);
@@ -46,6 +41,7 @@ export default function worker(e) {
       .then(({ module, instance }) => {
         // eslint-disable-next-line
         moduleInstance = instance;
+        wasmModule = module;
         onSuccess({
           exports: WebAssembly.Module
             .exports(module)
@@ -62,6 +58,20 @@ export default function worker(e) {
         const ctx = moduleInstance.exports;
         // eslint-disable-next-line
         onSuccess(ctx[func].apply(ctx, params));
+      })
+      .catch(onError);
+  } else if (action === ACTIONS.RUN_FUNCTION) {
+    const { func, params } = payload;
+
+    Promise.resolve()
+      .then(() => {
+        const fun = new Function("return " + func)();
+        onSuccess(fun({
+          module: wasmModule,
+          instance: moduleInstance,
+          importObject,
+          params
+        }));
       })
       .catch(onError);
   }

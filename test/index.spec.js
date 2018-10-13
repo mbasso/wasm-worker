@@ -89,4 +89,62 @@ describe('wasm-worker', () => {
         done();
       });
   });
+
+  it('should run a function inside worker', (done) => {
+    wasmWorker(bytes, {
+      getImportObject: () => ({
+        imports: {},
+      }),
+    })
+      .then(wasmModule =>
+        wasmModule.run(({
+          module,
+          instance,
+          importObject,
+          params
+        }) => {
+          const err = new Error();
+          if (params !== undefined) throw err;
+          if (!module instanceof WebAssembly.Module) throw err;
+          if (!instance instanceof WebAssembly.Instance) throw err;
+          if (importObject.imports === undefined) throw err;
+
+          const sum = instance.exports.add(1, 2);
+          return '1 + 2 = ' + sum;
+        })
+      )
+      .then((result) => {
+        expect(result).toEqual('1 + 2 = 3');
+        done();
+      });
+  });
+
+  it('should run a function inside worker with params', (done) => {
+    wasmWorker(bytes, {
+      getImportObject: () => ({
+        imports: {},
+      }),
+    })
+      .then(wasmModule =>
+        wasmModule.run(({
+          module,
+          instance,
+          importObject,
+          params
+        }) => {
+          const err = new Error();
+          if (params === undefined) throw err;
+          if (!module instanceof WebAssembly.Module) throw err;
+          if (!instance instanceof WebAssembly.Instance) throw err;
+          if (importObject.imports === undefined) throw err;
+
+          const sum = instance.exports.add(params[0], params[1]);
+          return '1 + 2 = ' + sum;
+        }, [1, 2])
+      )
+      .then((result) => {
+        expect(result).toEqual('1 + 2 = 3');
+        done();
+      });
+  });
 });

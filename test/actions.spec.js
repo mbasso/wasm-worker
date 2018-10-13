@@ -13,6 +13,10 @@ describe('actions', () => {
     expect(typeof ACTIONS.CALL_FUNCTION_EXPORT).toEqual('number');
   });
 
+  it('should export a run function action', () => {
+    expect(typeof ACTIONS.RUN_FUNCTION).toEqual('number');
+  });
+
   it('should not export duplicated values', () => {
     const values = Object.keys(ACTIONS).map(key => ACTIONS[key]);
 

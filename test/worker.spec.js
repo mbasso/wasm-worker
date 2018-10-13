@@ -26,14 +26,10 @@ describe('worker', () => {
 
     /* eslint-disable */
     const ACTIONS = ACTIONZ;
+    let importObject = undefined;
+    let wasmModule = null;
     let moduleInstance = null;
     const getImportObject = undefined;
-    const importObject = {
-      memoryBase: 0,
-      tableBase: 0,
-      memory: new WebAssembly.Memory({ initial: 256 }),
-      table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
-    };
 
     // helper variables
     const id = 0;
@@ -89,14 +85,10 @@ describe('worker', () => {
 
     /* eslint-disable */
     const ACTIONS = ACTIONZ;
+    let importObject = undefined;
+    let wasmModule = null;
     let moduleInstance = null;
     const getImportObject = undefined;
-    const importObject = {
-      memoryBase: 0,
-      tableBase: 0,
-      memory: new WebAssembly.Memory({ initial: 256 }),
-      table: new WebAssembly.Table({ initial: 0, element: 'anyfunc' }),
-    };
 
     // helper variables
     const id = 0;
