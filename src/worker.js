@@ -19,6 +19,7 @@ export default function worker(e) {
       .then(() => {
         let res;
         if (getImportObject !== undefined) {
+          // eslint-disable-next-line
           importObject = getImportObject();
         }
 
@@ -41,6 +42,7 @@ export default function worker(e) {
       .then(({ module, instance }) => {
         // eslint-disable-next-line
         moduleInstance = instance;
+        // eslint-disable-next-line
         wasmModule = module;
         onSuccess({
           exports: WebAssembly.Module
@@ -65,12 +67,13 @@ export default function worker(e) {
 
     Promise.resolve()
       .then(() => {
-        const fun = new Function("return " + func)();
+        // eslint-disable-next-line
+        const fun = new Function(`return ${func}`)();
         onSuccess(fun({
           module: wasmModule,
           instance: moduleInstance,
           importObject,
-          params
+          params,
         }));
       })
       .catch(onError);

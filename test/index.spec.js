@@ -101,17 +101,17 @@ describe('wasm-worker', () => {
           module,
           instance,
           importObject,
-          params
+          params,
         }) => {
           const err = new Error();
           if (params !== undefined) throw err;
-          if (!module instanceof WebAssembly.Module) throw err;
-          if (!instance instanceof WebAssembly.Instance) throw err;
+          if (!(module instanceof WebAssembly.Module)) throw err;
+          if (!(instance instanceof WebAssembly.Instance)) throw err;
           if (importObject.imports === undefined) throw err;
 
           const sum = instance.exports.add(1, 2);
-          return '1 + 2 = ' + sum;
-        })
+          return `1 + 2 = ${sum}`;
+        }),
       )
       .then((result) => {
         expect(result).toEqual('1 + 2 = 3');
@@ -130,17 +130,17 @@ describe('wasm-worker', () => {
           module,
           instance,
           importObject,
-          params
+          params,
         }) => {
           const err = new Error();
           if (params === undefined) throw err;
-          if (!module instanceof WebAssembly.Module) throw err;
-          if (!instance instanceof WebAssembly.Instance) throw err;
+          if (!(module instanceof WebAssembly.Module)) throw err;
+          if (!(instance instanceof WebAssembly.Instance)) throw err;
           if (importObject.imports === undefined) throw err;
 
           const sum = instance.exports.add(params[0], params[1]);
-          return '1 + 2 = ' + sum;
-        }, [1, 2])
+          return `1 + 2 = ${sum}`;
+        }, [1, 2]),
       )
       .then((result) => {
         expect(result).toEqual('1 + 2 = 3');
