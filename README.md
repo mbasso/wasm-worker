@@ -69,7 +69,7 @@ type JsCallback = (context: {
   instance: WebAssembly.Instance,
   importObject: importObject,
   params: any,
-}) => Promise<any>;
+}) => any;
 
 type WasmWorkerModule = {
   exports: {
@@ -78,7 +78,7 @@ type WasmWorkerModule = {
   // run a js function inside the worker and provides it the given params
   // ⚠️ Caveat: the function you pass cannot rely on its surrounding scope, since it is executed in an isolated context.
   // Please use the "params" parameter to provide some values to the callback
-  run: (callback: JsCallback, params: any) => Promise<any>
+  run: (callback: JsCallback, params?: any) => Promise<any>
 };
 
 type Options = {
