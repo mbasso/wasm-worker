@@ -1,6 +1,7 @@
 const ACTIONS = {
   COMPILE_MODULE: 0,
   CALL_FUNCTION_EXPORT: 1,
+  RUN_FUNCTION: 2,
 };
 
 export default ACTIONS;

@@ -40,17 +40,45 @@ wasmWorker('add.wasm')
     // ex is a string that represents the exception
     console.error(ex);
   });
+
+// you can also run js functions inside the worker
+// to access importObject for example
+wasmWorker('add.wasm')
+  .then(module => {
+    return module.run(({
+      // module,
+      // importObject,
+      instance,
+      params
+    }) => {
+      // here is sync
+      const sum = instance.exports.add(...params);
+      return '1 + 2 = ' + sum;
+    }, [1, 2]);
+  })
+  .then(result => {
+    console.log(result);
+  });
 ```
 
 ## API
 
-By default wasm-worker exports a single function:
-
 ```js
+type JsCallback = (context: {
+  module: WebAssembly.Module,
+  instance: WebAssembly.Instance,
+  importObject: importObject,
+  params: any,
+}) => any;
+
 type WasmWorkerModule = {
   exports: {
     [export: string]: (...any: Array<any>) => Promise<any>
-  }
+  },
+  // run a js function inside the worker and provides it the given params
+  // ⚠️ Caveat: the function you pass cannot rely on its surrounding scope, since it is executed in an isolated context.
+  // Please use the "params" parameter to provide some values to the callback
+  run: (callback: JsCallback, params?: any) => Promise<any>
 };
 
 type Options = {

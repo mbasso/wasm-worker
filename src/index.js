@@ -2,6 +2,13 @@ import ACTIONS from './actions';
 import workerOnMessage from './worker';
 import { getWasmSource } from './utils';
 
+const getTransferableParams = (params = []) =>
+  params.filter(x => (
+    (x instanceof ArrayBuffer) ||
+    (x instanceof MessagePort) ||
+    (x instanceof ImageBitmap)
+  ));
+
 export default function wasmWorker(source, options = {}) {
   let currentId = 0;
   const promises = {};
@@ -9,7 +16,7 @@ export default function wasmWorker(source, options = {}) {
 
   const worker = new Worker(
     `data:,ACTIONS=${JSON.stringify(ACTIONS)};getImportObject=${getImportObject};` +
-    `moduleInstance=null;onmessage=${workerOnMessage}`,
+    `importObject=undefined;wasmModule=null;moduleInstance=null;onmessage=${workerOnMessage}`,
     otherOptions,
   );
 
@@ -33,18 +40,29 @@ export default function wasmWorker(source, options = {}) {
                   func: exp,
                   params,
                 },
-              }, params.filter(x => (
-                (x instanceof ArrayBuffer) ||
-                (x instanceof MessagePort) ||
-                (x instanceof ImageBitmap)
-              )));
+              }, getTransferableParams(params));
             }),
           }), {}),
+          run: (func, params) => new Promise((...rest) => {
+            // eslint-disable-next-line
+            promises[++currentId] = rest;
+            worker.postMessage({
+              id: currentId,
+              action: ACTIONS.RUN_FUNCTION,
+              payload: {
+                func: func.toString(),
+                params,
+              },
+            }, getTransferableParams(params));
+          }),
         });
       } else if (result === 1) {
         promises[id][1](payload);
       }
-    } else if (action === ACTIONS.CALL_FUNCTION_EXPORT) {
+    } else if (
+      action === ACTIONS.CALL_FUNCTION_EXPORT ||
+      action === ACTIONS.RUN_FUNCTION
+    ) {
       promises[id][result](payload);
     }
 

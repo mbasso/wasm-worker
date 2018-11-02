@@ -25,6 +25,8 @@
     "ACTIONS"    : false,
     "WebAssembly": false,
     "getImportObject": false,
-    "moduleInstance"   : false
+    "moduleInstance"   : false,
+    "importObject": false,
+    "wasmModule" : false
   }
 }
