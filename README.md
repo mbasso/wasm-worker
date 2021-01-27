@@ -9,7 +9,7 @@
 > Move a WebAssembly module into its own thread
 
 
-_wasm-worker only supports browser environments, since it uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers). For use in a NodeJS environment, Web Workers must be polyfilled using a library like [node-webworker](https://github.com/pgriess/node-webworker)._
+_wasm-worker only supports browser environments, since it uses [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers). For use in a NodeJS environment, Web Workers must be polyfilled using a library like [node-webworker-threads](https://github.com/audreyt/node-webworker-threads)._
 
 ## Installation
 
