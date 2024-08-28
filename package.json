@@ -59,7 +59,7 @@
     "fetch-mock": "7.0.0-alpha.6",
     "karmatic": "1.2.0",
     "rimraf": "2.6.2",
-    "webpack": "3.5.5"
+    "webpack": "5.94.0"
   },
   "npmName": "wasm-worker",
   "npmFileMap": [
